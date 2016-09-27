@@ -1,0 +1,6 @@
+{
+  "name": "Elm Raycording",
+  "tagline": "Elm raycasting on Cordova devices",
+  "body": "### A mobile raycasting hack in Elm\r\n\r\nKris Jenkins [wrote a raycaster in Elm](https://github.com/krisajenkins/elm-rays).  I've just put it in an app.\r\n\r\nYou'll need Cordova and Elm.\r\n\r\n```\r\nnpm install -g cordova\r\n\r\ngit clone https://github.com/benagain/elm-rays.git && cd elm-rays\r\n\r\nnpm install\r\ncordova platform add android\r\ncordova run android --\r\n```",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}

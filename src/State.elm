@@ -30,9 +30,17 @@ update msg model =
             )
 
         Resize size ->
-            ( { model | display = modelForSize size }
+            ( { model
+                | display = modelForSize size
+                , mouse = Maybe.oneOf [ model.mouse, Just (centreOfWindow size) ]
+              }
             , Cmd.none
             )
+
+
+centreOfWindow : Window.Size -> Mouse.Position
+centreOfWindow size =
+    { x = size.width // 2, y = size.height // 2 }
 
 
 subscriptions : Model -> Sub Msg

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="hack.ben.raycastcordy" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" >
+    <name>ElmRayCast</name>
+    <description>
+        Build of elm-rays for Cordova
+    </description>
+    <content src="index.html" />
+    <access origin="*" />
+</widget>

@@ -1,0 +1,7 @@
+{
+  "name": "elm-rays-cordova",
+  "version": "1.0.0",
+  "devDependencies": {
+    "node-elm-compiler": "^4.1.4"
+  }
+}

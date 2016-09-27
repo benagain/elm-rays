@@ -10,14 +10,14 @@ import Types exposing (..)
 import Vectors exposing (..)
 
 
-root : Walls -> Mouse.Position -> Html msg
-root walls position =
+root : Display -> Mouse.Position -> Html msg
+root display position =
     svg
-        [ width "600"
-        , height "600"
+        [ width (toString display.size.width)
+        , height (toString display.size.height)
         ]
-        [ drawRays walls position
-        , drawWalls walls
+        [ drawRays display.walls position
+        , drawWalls display.walls
         , drawCursor position
         ]
 

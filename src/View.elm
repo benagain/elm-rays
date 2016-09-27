@@ -11,7 +11,7 @@ root model =
     div []
         [ case model.mouse of
             Just position ->
-                View.Svg.root model.walls position
+                View.Svg.root model.display position
 
             _ ->
                 Html.text "Initializing."
@@ -27,17 +27,8 @@ copy =
             ]
         ]
         [ div []
-            [ Html.text "A raycasting hack in "
-            , a [ href "http://elm-lang.org/" ]
-                [ text "Elm" ]
-            , text ", based on "
-            , a [ href "http://ncase.me/sight-and-light" ]
-                [ text "this excellent tutorial" ]
-            , text "."
-            ]
-        , div []
-            [ a [ href "https://github.com/krisajenkins/elm-rays" ]
-                [ text "Source Code"
-                ]
+            [ a [ href "http://elm-lang.org/" ] [ text "Elm" ]
+            , text " on Cordova raycasting.  See "
+            , a [ href "https://github.com/krisajenkins/elm-rays" ] [ text "source code" ]
             ]
         ]

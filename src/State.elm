@@ -1,32 +1,24 @@
-module State exposing (..)
+module State exposing (initialModel, initialCmd, update, subscriptions)
 
 import Mouse
 import Platform.Cmd as Cmd
 import Platform.Sub as Sub
 import Types exposing (..)
+import Window
+import Vectors
+import Task
 
 
 initialModel : Model
 initialModel =
-    { walls =
-        [ { position = { x = 0, y = 0 }, vector = { length = 600, angle = degrees 0 } }
-        , { position = { x = 0, y = 600 }, vector = { length = 600, angle = degrees 0 } }
-        , { position = { x = 0, y = 0 }, vector = { length = 600, angle = degrees 90 } }
-        , { position = { x = 600, y = 0 }, vector = { length = 600, angle = degrees 90 } }
-        , { position = { x = 400, y = 400 }, vector = { length = 50, angle = degrees 315 } }
-        , { position = { x = 220, y = 400 }, vector = { length = 50, angle = degrees 290 } }
-        , { position = { x = 100, y = 480 }, vector = { length = 150, angle = degrees 250 } }
-        , { position = { x = 450, y = 200 }, vector = { length = 120, angle = degrees 235 } }
-        , { position = { x = 70, y = 50 }, vector = { length = 300, angle = degrees 70 } }
-        , { position = { x = 300, y = 150 }, vector = { length = 200, angle = degrees 30 } }
-        ]
+    { display = modelForSize smallSquare
     , mouse = Nothing
     }
 
 
 initialCmd : Cmd Msg
 initialCmd =
-    Cmd.none
+    Task.perform (\_ -> Resize smallSquare) (\size -> Resize size) Window.size
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -37,7 +29,44 @@ update msg model =
             , Cmd.none
             )
 
+        Resize size ->
+            ( { model | display = modelForSize size }
+            , Cmd.none
+            )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Mouse.moves Mouse
+    Sub.batch
+        [ Mouse.moves Mouse
+        , Window.resizes Resize
+        ]
+
+
+modelForSize : Window.Size -> Display
+modelForSize size =
+    let
+        width =
+            toFloat size.width
+
+        height =
+            (toFloat size.height) - 25
+    in
+        { size = Window.Size (round width) (round height)
+        , walls =
+            [ { position = { x = 0, y = 0 }, vector = { length = width, angle = degrees 0 } }
+            , { position = { x = 0, y = height }, vector = { length = width, angle = degrees 0 } }
+            , { position = { x = 0, y = 0 }, vector = { length = height, angle = degrees 90 } }
+            , { position = { x = width, y = 0 }, vector = { length = height, angle = degrees 90 } }
+            , Vectors.lineBetween { x = width * 2 / 6, y = height * 2 / 6 } { x = width * 4 / 6, y = height * 4 / 6 }
+            , Vectors.lineBetween { x = width * 1 / 6, y = height * 3 / 8 } { x = width * 3 / 8, y = height * 2 / 8 }
+            , Vectors.lineBetween { x = width * 1 / 6, y = height * 5 / 6 } { x = width * 2 / 6, y = height * 4 / 6 }
+            , Vectors.lineBetween { x = width * 1 / 4, y = height * 1 / 8 } { x = width * 3 / 4, y = height * 1 / 8 }
+            , Vectors.lineBetween { x = width * 3 / 6, y = height * 3 / 6 } { x = width * 5 / 6, y = height * 2 / 6 }
+            , Vectors.lineBetween { x = width * 3 / 6, y = height * 5 / 6 } { x = width * 5 / 6, y = height * 3 / 6 }
+            ]
+        }
+
+
+smallSquare =
+    { width = 100, height = 100 }

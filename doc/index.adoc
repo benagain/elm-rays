@@ -1,0 +1,89 @@
+:source-highlighter: highlightjs
+:icons: font
+
+= Mobile Elm Rays
+
+[.lead]
+Kris Jenkins wrote a raycaster in Elm. I put it in a mobile app.
+
+== First, take your rays
+
+In the Elm-Weekly newsletter a couple of weeks ago I stumbled across a cool raycasting project.  
+The raycaster itself is about two pages of fairly easy to understand Elm code, you should https://github.com/krisajenkins/elm-rays/blob/master/src/Raycasting.elm[check it out].
+
+As I've done a fair amount of work with cross-platform c++ mobile apps over the years and still ocassionally write some Ionic based ones for work I thought it would be fun to see how hard it is to write an app using Elm.  
+By which I mean completely steal somebody else's code and simply make it run inside a Cordova project.
+Standing on the shoulder of giants and all that.
+
+It turns out to be pretty easy.  
+Essentially you create an empty Cordova project, find some code to plagiarise, hook up an elm compiler in the Cordova build process, tie up a couple of loose ends and voila.
+
+== Cordova
+
+Easy.
+
+[source, bash]
+----
+cordova create elm-rays-cordova hack.benagain.mobileelmrays \
+        MobileElmRays --template phonegap-template-blank
+----
+
+== Elm-make
+
+Cordova will run custom scripts at various points along the process if you tell it to.  There are 
+https://cordova.apache.org/docs/en/latest/guide/appdev/hooks/[quite a few] places to choose from.  `before_prepare` will make
+sure the compiler is run whenever you `cordova build` or `cordova run`.  Just add it to your Cordova `config.xml`
+
+[source, xml]
+----
+<hook type="before_prepare" src="hooks/make-elm.js" />
+----
+
+And then make the script compile [line-through]#your# Kris' Elm files
+
+[[app-listing]]
+[source, javascript]
+.hooks/make-elm.js
+----
+module.exports = function(context) {
+
+    var Q = context.requireCordovaModule('q');
+    var deferral = new Q.defer();
+    var compile = require("node-elm-compiler").compile;
+
+    compile(["./src/Main.elm"], {           // <1>
+        output: "www/js/elm-main.js"        
+    })
+    .on('close', function(exitCode) {
+        if(exitCode == 0)
+            deferral.resolve(exitCode);     // <2>
+        else
+            deferral.reject(new Error("Elm compilation"));
+    });
+
+    return deferral.promise;
+}
+----
+<1> We only specify the single Main.elm file, everything else Just Works(TM)
+<2> `node-elm-compiler` uses asynchronous spawn.  Luckily Cordova support promises in its custom scripts.  
+
+
+[source, html]
+----
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, 
+                                user-scalable=no, width=device-width">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <title>ElmRayCast</title>
+  </head>
+  <body id="elm-main" >
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/elm-main.js"></script>
+    <script type="text/javascript" src="js/zepto.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+  </body>
+</html>  
+----

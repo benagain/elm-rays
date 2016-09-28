@@ -1,15 +1,5 @@
-# Raycasting
+# Raycasting.  On Mobile.
 
-Written for April 2016's [West London Hack Night](http://www.meetup.com/West-London-Hack-Night/) with [James Deery](https://github.com/derkyjadex) and Peter Jones.
+Kris Jenkins wrote a raycaster in Elm. I put it in a mobile app.
 
-[See it live here](http://krisajenkins.github.io/elm-rays/).
-
-![Screenshot](screenshot.png?raw=true)
-
-## Building
-
-You'll need Elm 0.17. Then call:
-
-```
-$ elm-make --warn --output=index.html src/Main.elm
-```
+[See Kris' original live here](http://krisajenkins.github.io/elm-rays/).

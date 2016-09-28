@@ -11,7 +11,7 @@ Kris Jenkins wrote a raycaster in Elm. I put it in a mobile app.
 In the Elm-Weekly newsletter a couple of weeks ago I stumbled across a cool raycasting project.  
 The raycaster itself is about two pages of fairly easy to understand Elm code, you should https://github.com/krisajenkins/elm-rays/blob/master/src/Raycasting.elm[check it out].
 
-As I've done a fair amount of work with cross-platform c++ mobile apps over the years and still ocassionally write some Ionic based ones for work I thought it would be fun to see how hard it is to write an app using Elm.  
+As I've done a fair amount of work with cross-platform c++ mobile apps over the years, and still ocassionally write some Ionic based ones for work, so I thought it would be fun to see how hard it is to write an app using Elm.  
 By which I mean completely steal somebody else's code and simply make it run inside a https://cordova.apache.org/[Cordova] project.
 Standing on the shoulder of giants and all that.
 
@@ -71,7 +71,7 @@ module.exports = function(context) {
 
 Cordova essentially wraps your HTML site inside a native app that is really only a WebView.
 It also provides Cordova Plugins to give you access to device features such as the camera, contact list, etc.
-A number of projects have built on top of this to let you write [http://ionicframework.com/]Angular or [http://reapp.io/]React based apps quite easily.
+A number of projects have built on top of this to let you write http://ionicframework.com/[Angular] or http://reapp.io/[React] based apps quite easily.
 We ignore all of that and simply embed the Elm app as per the https://guide.elm-lang.org/interop/javascript.html#step-1-embed-in-html[guide]. 
 
 [[app-listing]]
@@ -114,4 +114,45 @@ There are a couple of niggles though.  The ray traced world is either a tiny par
 
 == Fit to screen
 
+We're actually going to modify some Elm code here!  
+The original rectangle walls were hard-coded to 600x600, we need to figure out what the actual size is and recalculate the wall positions.  The window size can't be a pure function - browsers can be resized after all - so asking Elm for the window size is a `Cmd`, and we need to add a new `Msg` to handle the response.
+
+[source, elm]
+.src/Types.elm
 ----
+type Msg
+    = Mouse Mouse.Position
+    | Resize Window.Size
+----
+
+[source, elm]
+.src/State.elm
+----
+initialCmd =
+    Task.perform 
+        (\_ -> Resize (Window.Size 100 100))
+        (\size -> Resize size)
+        Window.size                 
+
+
+update msg model =
+    case msg of
+        ...
+
+        Resize size ->
+            ( { model | display = modelForSize size }
+            , Cmd.none
+            )        
+
+
+subscriptions _ =
+    Sub.batch
+        [ Mouse.moves Mouse
+        , Window.resizes Resize
+        ]            
+----
+
+We change the `initialCmd` from `Cmd.none` to a task that asks for the window size using our new `Resize` message.
+If the task fails we simply set the display to a 100x100 square.
+The `update` function handles the `Resize` by calculating a new set of walls. 
+Whilst we're at it we also subscribe to the `Window.resizes` subscription, so when the device is rotated we resize to fit the new orientation.

@@ -2,7 +2,7 @@ Bundler.require(:default)
 
 guard 'shell' do
   watch(/^doc\/index\.adoc$/) {|m|
-    Asciidoctor.convert_file(m[0], :in_place => true)
+    Asciidoctor.convert_file m[0], to_file: true, safe: :safe
   }
 end
 

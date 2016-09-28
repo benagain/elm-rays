@@ -12,11 +12,11 @@ In the Elm-Weekly newsletter a couple of weeks ago I stumbled across a cool rayc
 The raycaster itself is about two pages of fairly easy to understand Elm code, you should https://github.com/krisajenkins/elm-rays/blob/master/src/Raycasting.elm[check it out].
 
 As I've done a fair amount of work with cross-platform c++ mobile apps over the years and still ocassionally write some Ionic based ones for work I thought it would be fun to see how hard it is to write an app using Elm.  
-By which I mean completely steal somebody else's code and simply make it run inside a Cordova project.
+By which I mean completely steal somebody else's code and simply make it run inside a https://cordova.apache.org/[Cordova] project.
 Standing on the shoulder of giants and all that.
 
 It turns out to be pretty easy.  
-Essentially you create an empty Cordova project, find some code to plagiarise, hook up an elm compiler in the Cordova build process, tie up a couple of loose ends and voila.
+Essentially you create an empty Cordova project, find some code to plagiarise, hook up an elm compiler in the Cordova build process, load the generated javascript in the app, tie up a couple of loose ends and voila.
 
 == Cordova
 
@@ -67,23 +67,51 @@ module.exports = function(context) {
 <1> We only specify the single Main.elm file, everything else Just Works(TM)
 <2> `node-elm-compiler` uses asynchronous spawn.  Luckily Cordova support promises in its custom scripts.  
 
+== HTML App
 
+Cordova essentially wraps your HTML site inside a native app that is really only a WebView.
+It also provides Cordova Plugins to give you access to device features such as the camera, contact list, etc.
+A number of projects have built on top of this to let you write [http://ionicframework.com/]Angular or [http://reapp.io/]React based apps quite easily.
+We ignore all of that and simply embed the Elm app as per the https://guide.elm-lang.org/interop/javascript.html#step-1-embed-in-html[guide]. 
+
+[[app-listing]]
 [source, html]
+.www/index.html
 ----
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, 
-                                user-scalable=no, width=device-width">
+                                   user-scalable=no, width=device-width">
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <title>ElmRayCast</title>
   </head>
   <body id="elm-main" >
-    <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/elm-main.js"></script>
-    <script type="text/javascript" src="js/zepto.min.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="cordova.js"></script> 
+    <script type="text/javascript" src="js/elm-main.js"></script> <!--1-->
+    <script>
+      var node = document.getElementById('elm-main');
+      var app = Elm.Main.embed(node);
+    </script> <!--2-->
   </body>
 </html>  
+----
+<1> This is the generated output from elm-make.
+<2> Straight out of the Elm guide.
+
+_And that's it!_
+
+[source, bash]
+----
+cordova run android --
+----
+
+You have an Elm app running you your phone.  
+Just think about how much work people have put in so we could do virtually nothing.
+
+There are a couple of niggles though.  The ray traced world is either a tiny part of the device's screen, or doesn't quite fit - depending on the device.  Also, the HTML links to Kris' github don't work.  Let's fix them.
+
+== Fit to screen
+
 ----

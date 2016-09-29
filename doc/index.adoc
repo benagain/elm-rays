@@ -12,7 +12,7 @@ Kris Jenkins wrote a raycaster in Elm. I put it in a mobile app.
 In the Elm-Weekly newsletter a couple of weeks ago I stumbled across a cool raycasting project.  
 The raycaster itself is about two pages of fairly easy to understand Elm code, you should https://github.com/krisajenkins/elm-rays/blob/master/src/Raycasting.elm[check it out].
 
-As I've done a fair amount of work with cross-platform c++ mobile apps over the years, and still ocassionally write some Ionic based ones for work, so I thought it would be fun to see how hard it is to write an app using Elm.  
+As I've done a fair amount of work with cross-platform c++ mobile apps over the years, and still ocassionally write some Ionic based ones for work, I thought it would be fun to see how hard it is to write an app using Elm.  
 By which I mean completely steal somebody else's code and simply make it run inside a https://cordova.apache.org/[Cordova] project.
 Standing on the shoulder of giants and all that.
 

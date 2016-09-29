@@ -1,0 +1,7 @@
+elm-stuff/
+.vscode/
+node_modules/
+platforms/
+plugins/
+www/js/elm-main.js
+doc/index.html

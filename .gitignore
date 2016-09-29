@@ -5,3 +5,5 @@ platforms/
 plugins/
 node_modules/
 www/js/elm-main.js
+.vscode/
+doc/index.html

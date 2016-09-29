@@ -120,6 +120,8 @@ There are a couple of niggles though.  The ray traced world is either a tiny par
 We're actually going to modify some Elm code here!  
 The original rectangle walls were hard-coded to 600x600, we need to figure out what the actual size is and recalculate the wall positions.  The window size can't be a pure function - browsers can be resized after all - so asking Elm for the window size is a `Cmd`, and we need to add a new `Msg` to handle the response.
 
+Full diff: https://github.com/benagain/elm-rays-cordova/commit/295b5616b5578d6980eb2a786e90edf4e8ff692e[on Github icon:github[]]
+
 [source, elm]
 .src/Types.elm
 ----
